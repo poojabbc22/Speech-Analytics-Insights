@@ -1,0 +1,70 @@
+import json
+import requests
+
+
+def obtain_jwt():
+    credentials = {
+        "Username": "*******",
+        "Password": "!***********",
+        "ApiKey": "**"
+    }
+    response = requests.post('https:en', json=credentials)
+    data = response.json()
+    jwt_token = data
+
+    return jwt_token
+
+
+def get_data_from_apis():
+    jwt_token = obtain_jwt()
+    headers = {
+        'Authorization': f'JWT {jwt_token}',
+        "Content-Type": "application/json; charset=utf-8"
+    }
+
+    categories_url = "httfalse"
+    response = requests.get(categories_url, headers=headers)
+    data = response.json()
+    bucket_ids = [json_obj.get('BucketId') for json_obj in data]
+
+    components_data = []
+    for bucket_id in bucket_ids:
+        components_url = f'httpories/{{id}}/components?id={bucket_id}'
+        response = requests.get(components_url, headers=headers)
+        component_data = response.json()
+        components_data.extend(component_data)
+
+    convertion_into_json(components_data, r"C:\Users\ps\Desktop\callr\api_data\components.json")
+    print("Components written")
+
+    metadata_url = "httpsata"
+    metadata_data = get_metadata(metadata_url, headers)
+    convertion_into_json(metadata_data, r"C:\Users\poo\Desktop\callr\api_data\metadata.json")
+    print("Metadata written")
+
+    score_url = "h=false"
+    scores_data = get_scores(score_url, headers)
+    convertion_into_json(scores_data, r"C:s\Desktop\call_miner\api_data\scoredata.json")
+    print("Scores written")
+
+
+def get_metadata(metadata_url, headers):
+    response = requests.get(metadata_url, headers=headers)
+    data = response.json()
+    return data
+
+
+def get_scores(score_url, headers):
+    response = requests.get(score_url, headers=headers)
+    data = response.json()
+    return data
+
+
+def convertion_into_json(data, file_path):
+    json_data = json.dumps(data)
+    with open(file_path, "w") as file:
+        file.write(json_data)
+    print(f"JSON file '{file_path}' written")
+
+
+get_data_from_apis()
